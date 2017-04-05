@@ -483,7 +483,8 @@
 - (void)dismissAnimated:(BOOL)animated completion:(void (^)(void))completion {
     [UIView setAnimationsEnabled:YES];
     
-    [[UIApplication sharedApplication] setStatusBarHidden:_fromNavigationBarHidden withAnimation:animated ? UIStatusBarAnimationFade : UIStatusBarAnimationNone];
+    //    [[UIApplication sharedApplication] setStatusBarHidden:_fromNavigationBarHidden withAnimation:animated ? UIStatusBarAnimationFade : UIStatusBarAnimationNone];
+    [UIApplication sharedApplication].statusBarHidden = _fromNavigationBarHidden;
     NSInteger currentPage = self.currentPage;
     YYPhotoGroupCell *cell = [self cellForPage:currentPage];
     YYPhotoGroupItem *item = _groupItems[currentPage];
@@ -535,7 +536,7 @@
     } else {
         _background.image = _snapshorImageHideFromView;
     }
-
+    
     
     if (isFromImageClipped) {
         [cell scrollToTopAnimated:NO];
@@ -632,10 +633,10 @@
 
 
 - (void)hidePager {
-        [UIView animateWithDuration:0.3 delay:0.8 options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseOut animations:^{
-            _pager.alpha = 0;
-        }completion:^(BOOL finish) {
-        }];
+    [UIView animateWithDuration:0.3 delay:0.8 options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseOut animations:^{
+        _pager.alpha = 0;
+    }completion:^(BOOL finish) {
+    }];
 }
 
 /// enqueue invisible cells for reuse
@@ -762,13 +763,14 @@
     if ([activityViewController respondsToSelector:@selector(popoverPresentationController)]) {
         activityViewController.popoverPresentationController.sourceView = self;
     }
-
+    
     UIViewController *toVC = self.toContainerView.viewController;
     if (!toVC) toVC = self.viewController;
     [toVC presentViewController:activityViewController animated:YES completion:nil];
 }
 
 - (void)pan:(UIPanGestureRecognizer *)g {
+    
     switch (g.state) {
         case UIGestureRecognizerStateBegan: {
             if (_isPresented) {
@@ -801,7 +803,8 @@
             if (fabs(v.y) > 1000 || fabs(deltaY) > 120) {
                 [self cancelAllImageLoad];
                 _isPresented = NO;
-                [[UIApplication sharedApplication] setStatusBarHidden:_fromNavigationBarHidden withAnimation:UIStatusBarAnimationFade];
+                //                [[UIApplication sharedApplication] setStatusBarHidden:_fromNavigationBarHidden withAnimation:UIStatusBarAnimationFade];
+                [UIApplication sharedApplication].statusBarHidden = _fromNavigationBarHidden;
                 
                 BOOL moveToTop = (v.y < - 50 || (v.y < 50 && deltaY < 0));
                 CGFloat vy = fabs(v.y);
